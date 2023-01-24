@@ -1,7 +1,8 @@
 package com.bill.springbootmall.dao.impl;
 
-import com.bill.springbootmall.constant.ProductCategory;
+
 import com.bill.springbootmall.dao.ProductDao;
+import com.bill.springbootmall.dto.ProductQueryParams;
 import com.bill.springbootmall.dto.ProductRrquest;
 import com.bill.springbootmall.model.Product;
 import com.bill.springbootmall.rowmapper.ProductRowMapper;
@@ -23,19 +24,19 @@ public class ProductDaoImpl implements ProductDao {
 
 
     @Override
-    public List<Product> getProducts(ProductCategory category, String search) {
+    public List<Product> getProducts(ProductQueryParams productQueryParams) {
         String sql = "SELECT product_id, product_name, category, image_url, price, "+
                 "stock, description, created_date, last_modified_date "+
                 "FROM product WHERE 1=1";
 
         Map<String, Object> map = new HashMap<String, Object>();
-        if(category != null){
+        if(productQueryParams.getCategory() != null){
             sql = sql + " AND category = :category";
-            map.put("category", category.name());
+            map.put("category", productQueryParams.getCategory().name());
         }
-        if(search != null){
+        if(productQueryParams.getSearch() != null){
             sql = sql + " AND product_name Like :search";
-            map.put("search", "%"+search+"%");
+            map.put("search", "%"+productQueryParams.getSearch()+"%");
         }
 
         List<Product> productList = namedParameterJdbcTemplate.query(sql, map, new ProductRowMapper());
